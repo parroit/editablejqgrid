@@ -1,0 +1,133 @@
+from gluon.storage import Storage
+class Description(object):
+    def __init__(self,table_name,field_name):
+        self.table_name=table_name
+        self.field_name=field_name
+    def description(self):
+        try:
+            description=self.__getattribute__(self.table_name)[self.field_name]
+        except:
+            description="Error"
+        return description
+    
+def set_description_column(table,field_name):
+    table.virtualfields.append(Description(table._tablename,field_name))
+
+    
+from gluon.html import XmlComponent
+class jqGrid(XmlComponent):
+    text="""
+        <script type="text/javascript">
+             jQuery(document).ready(function(){
+                 create_grid("#%(grid_name)s",'#pager-%(grid_name)s','%(url)s',%(col_names)s,%(col_models)s,'%(caption)s','%(edit_url)s');
+             }); 
+             lookups=%(lookups)s;
+        </script>
+        
+        <table id="%(grid_name)s"></table> 
+        <div id="pager-%(grid_name)s"></div>
+        """
+
+
+    def get_custom_element_function(self,field):
+        from gluon.sqlhtml import OptionsWidget
+        if OptionsWidget.has_options(field):
+            widget=SQLFORM.widgets.options.widget(field,'no_selection').xml()
+            script= """
+                 function (value, options) {
+                       var el = document.createElement('div');
+                       el.innerHTML='%s'.replace('>'+value+'<',' selected="selected">'+value+'<');
+                       el.children[0].style.width="100%%";
+                       return el;
+                 }""" % widget;
+            return script;
+        elif field.type=='boolean':
+            return "get_bool_widget"
+        else:        
+            if field.type=='time':
+                calendar="el.children[0].onfocus=function(){time_setup(this.attributes['id'].value);};"
+            elif field.type=='date':
+                calendar="el.children[0].onfocus=function(){calendar_setup_date(this.attributes['id'].value);};"
+            elif field.type=='datetime':
+                calendar="el.children[0].onfocus=function(){calendar_setup_datetime(this.attributes['id'].value);};"
+            elif field.type=='double':
+                calendar="el.children[0].onfocus=function(){double_setup(this);};"
+            elif field.type=='integer':
+                calendar="el.children[0].onfocus=function(){integer_setup(this);};"
+            else:
+                calendar=""
+                
+            widget=SQLFORM.widgets[field.type].widget(field,'a_value').xml()
+            return """
+               function (value, options) {var el = document.createElement('div');  el.innerHTML='%s'.replace('a_value',value);  
+               %s
+               el.children[0].style.width="100%%";
+               return el;
+               }""" % (widget,calendar);
+        
+    def get_custom_value_function(self,field):
+        if field.type=='boolean':
+            return "get_bool_value"        
+        else:
+            return "get_normal_value"
+    
+    def get_custom_formatter_function(self,field):
+        
+        if field.type=='boolean':
+
+            return """function (cellvalue, options, rowObject) {
+                    var checked;
+                    if (cellvalue)
+                         checked="checked='checked'";
+                    else    
+                         checked='';
+                    return "<input type='checkbox' " + checked +  " disabled='disabled'/>";
+            }"""        
+        elif self.has_lookups(field):
+            return "function (cellvalue, options, rowObject) {if (cellvalue ==null) return ''; else return lookups['%s'][cellvalue];}" % field.name        
+        else:
+            return "undefined"
+    
+    def get_lookups(self,field):
+        requires = field.requires
+        if not isinstance(requires, (list, tuple)):
+            requires = [requires]
+        if requires:
+            if hasattr(requires[0], 'options'):
+                options = requires[0].options()        
+        return ','.join(["'%s':'%s'" % o for o in options])
+    
+    def has_lookups(self,field):
+        from gluon.sqlhtml import OptionsWidget
+        return OptionsWidget.has_options(field)
+        
+
+    
+    def __init__(self,table,grid_name='grid',db_name='db',caption=''):
+        
+        self.params=Storage()
+        if caption=='':
+            caption=table._tablename
+        self.params.grid_name=grid_name    
+        self.params.caption=caption
+        self.params.url=URL(a=request.application,c='plugin_editable_jqgrid',f='call',args=['json','get_rows',table._tablename,db_name])
+        self.params.edit_url=URL(a=request.application,c='plugin_editable_jqgrid',f='call',args=['json','save_row',table._tablename,db_name])
+        self.params.lookups='{'+','.join(["'"+f+"':{"+self.get_lookups(table[f])+"}" for f in table.fields if self.has_lookups(table[f])])+'}'
+        self.params.col_names='['+','.join(["'"+table[f].label+"'" for f in table.fields])+']'
+        self.params.col_models= "[{name:'id',index:'id', width:85, editable: false},\n" 
+        self.params.col_models+=','.join(["{formatter:%s,name:'%s',index:'%s',editable:true,edittype:'custom',editoptions:{custom_element: %s, custom_value:%s}}\n" % (self.get_custom_formatter_function(table[f]),f,f,self.get_custom_element_function(table[f]),self.get_custom_value_function(table[f])) for f in table.fields if f!='id'])+']'
+        
+        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='plugin_editable_jqgrid.js'))
+        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery-ui-1.7.2.custom.min.js'))
+        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery-ui-1.7.2.custom.css'))
+        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid/i18n',f='grid.locale-it.js'))
+        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery.jqGrid.min.js'))
+        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='ui.jqgrid.css'))
+        
+    def xml(self):
+        
+        return self.text % self.params
+                                
+
+    def __str__(self):
+        return self.xml()
