@@ -1,20 +1,21 @@
 editablejqgrid
 ==============
 
-Editable JqGrid is a plugin for [http://www.web2py.com]web2py that make it easy to use [http://www.trirand.com/blog]JqGrid in your application.
+Editable JqGrid is a plugin for [web2py](http://www.web2py.com) that make it easy to use [JqGrid](http://www.trirand.com/blog) in your application.
 
 **What is Editable JqGrid**
-
 
 Editable JqGrid is a plugin for web2py that make it easy to use JqGrid in your application.
 It's just a matter of install the plugin in the application and then call a single function from your controller.
 Editable JqGrid is still in Beta stage, so use at your own risk!
 
 **What is web2py**
+
 Web2py is a Free and open source full-stack enterprise framework for agile development of fast, scalable, secure
  and portable database-driven web-based applications. Written and programmable in Python .
 
 **What are web2py plugins**
+
 web2py plugins are self contained pieces of an application that can be added to any existing application.
 They usually define components, i.e. objects that can be embedded in a page and talk to the server via ajax.
 Often they include corresponding jQuery plugins and the serverside funcitonality to make them work.
@@ -33,11 +34,13 @@ your app, you can customize it without affecting other apps. Look and feel can b
 * SQLTable similar syntax to easing the replace of your html table in existing application (TODO)
 * Licensed under LGPL. You can use it in your commercial or open source application
 
-*Download*
-Download version 0.2.0 from [https://github.com/parroit/editablejqgrid/releases/download/0.0.2/web2py.plugin.editable_jqgrid.w2p]here
+**Download**
+
+Download [version 0.2.0](https://github.com/parroit/editablejqgrid/releases/download/0.0.2/web2py.plugin.editable_jqgrid.w2p)
 
 
 **Simple example**
+
 First and obviously, you have to have a web2py application. For this example, we have defined following model:
 
     db_invoice = DAL('sqlite://invoice.sqlite')
