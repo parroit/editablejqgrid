@@ -90,4 +90,4 @@ the same page, and db_name only if it differ from 'db'.
 
 To just use one simple grid, just use
 
-*return dict(customers=jqGrid(db.customer)*
+*return dict(customers=jqGrid(db.customer))*
