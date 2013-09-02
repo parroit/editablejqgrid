@@ -1,0 +1,7 @@
+input[type=text].ui-pg-input {
+    width: 25px;
+}
+
+select.ui-pg-selbox {
+    width: 60px;
+}

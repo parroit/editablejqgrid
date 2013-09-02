@@ -169,13 +169,14 @@ class plugin_editable_jqgrid(XmlComponent):
             return (self.get_custom_formatter_function(grid_name,table[f]),f,f,self.get_custom_element_function(table[f]),self.get_custom_value_function(table[f]))        
         
         self.params.col_models+=','.join(["{formatter:%s,name:'%s',index:'%s',editable:true,edittype:'custom',editoptions:{custom_element: %s, custom_value:%s}}\n" % options() for f in columns if f!='id'])+']'
-        
-        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='plugin_editable_jqgrid.js'))
-        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery-ui-1.7.2.custom.min.js'))
-        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery-ui-1.7.2.custom.css'))
-        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid/i18n',f='grid.locale-it.js'))
-        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery.jqGrid.min.js'))
-        response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='ui.jqgrid.css'))
+
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery-ui-1.10.3.custom.min.js'))
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='jquery-ui-1.10.3.custom.min.css'))
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid/i18n',f='grid.locale-it.js'))
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid/js',f='jquery.jqGrid.js'))
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='ui.jqgrid.css'))
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='custom.jqgrid.css'))
+    response.files.append(URL(r=request,c='static/plugin_editable_jqgrid',f='plugin_editable_jqgrid.js'))
         
     def xml(self):
         

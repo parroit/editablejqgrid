@@ -36,10 +36,10 @@ function create_grid(grid_name,pager,controller_url,col_names,col_models,caption
     caption: caption
   });
   jQuery(grid_name).jqGrid('navGrid',pager, {search:true,add:false,edit:false,del:false}); 
-  jQuery(grid_name).jqGrid('navButtonAdd',pager,{ caption:"Add", buttonicon:"ui-icon-plus", onClickButton:function(){addRow(grid_name)}});
-  jQuery(grid_name).jqGrid('navButtonAdd',pager,{ caption:"Delete", buttonicon:"ui-icon-trash", onClickButton:function(){deleteRows(grid_name)}});
-  
-  jQuery(grid_name).setGridWidth(700,false);
+  jQuery(grid_name).jqGrid('navButtonAdd',pager,{ caption:"", buttonicon:"ui-icon-plus", onClickButton:function(){addRow(grid_name)}});
+  jQuery(grid_name).jqGrid('navButtonAdd',pager,{ caption:"", buttonicon:"ui-icon-trash", onClickButton:function(){deleteRows(grid_name)}});
+
+  jQuery(grid_name).setGridWidth(900,false);
   jQuery(grid_name).setGridHeight(300,false);
 }
         
